@@ -295,7 +295,11 @@ function fillStructMembers(
  * Returns the stride for using a type as a uniform buffer array element.
  * (Same as storage stride but rounded up to 16.)
  */
-export function uniformArrayStride(types: TypeDef[], structs: StructDef[], elemRef: TypeRef): number {
+export function uniformArrayStride(
+  types: TypeDef[],
+  structs: StructDef[],
+  elemRef: TypeRef,
+): number {
   const { size, align } = _sizeAlign(types, structs, types[elemRef]!, { addressSpace: 'storage' });
   return alignTo(alignTo(size, align), 16);
 }

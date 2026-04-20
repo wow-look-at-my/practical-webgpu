@@ -18,7 +18,9 @@ export interface CodegenConfig {
   runtimePackage: string;
 }
 
-export function defineConfig(config: Partial<CodegenConfig> & { shaders: string[] }): CodegenConfig {
+export function defineConfig(
+  config: Partial<CodegenConfig> & { shaders: string[] },
+): CodegenConfig {
   return {
     outDir: 'generated',
     outLayout: 'mirror',

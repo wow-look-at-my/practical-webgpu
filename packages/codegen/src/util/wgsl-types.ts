@@ -10,14 +10,14 @@ export function isScalarName(name: string): name is ScalarKind {
 export function parseVecName(name: string): 2 | 3 | 4 | null {
   const m = /^vec([234])$/.exec(name);
   if (!m) return null;
-  return parseInt(m[1]!, 10) as 2 | 3 | 4;
+  return Number.parseInt(m[1]!, 10) as 2 | 3 | 4;
 }
 
 /** Parse "matCxR" → { cols, rows }, or null. */
 export function parseMatName(name: string): { cols: number; rows: number } | null {
   const m = /^mat([234])x([234])$/.exec(name);
   if (!m) return null;
-  return { cols: parseInt(m[1]!, 10), rows: parseInt(m[2]!, 10) };
+  return { cols: Number.parseInt(m[1]!, 10), rows: Number.parseInt(m[2]!, 10) };
 }
 
 /**

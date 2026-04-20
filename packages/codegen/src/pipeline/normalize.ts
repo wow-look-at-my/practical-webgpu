@@ -5,19 +5,19 @@
  * separately by layout.ts (which correctly handles all address-space rules).
  */
 
-import { WgslReflect, ResourceType } from 'wgsl_reflect';
-import { fillLayoutIntoIR } from './layout.js';
-import { isScalarName, parseVecName, parseMatName } from '../util/wgsl-types.js';
+import { ResourceType, WgslReflect } from 'wgsl_reflect';
 import type {
+  BindGroupLayout,
+  Binding,
+  EntryPoint,
   ReflectionIR,
+  ShaderStage,
+  StructDef,
   TypeDef,
   TypeRef,
-  StructDef,
-  Binding,
-  BindGroupLayout,
-  EntryPoint,
-  ShaderStage,
 } from '../ir/types.js';
+import { isScalarName, parseMatName, parseVecName } from '../util/wgsl-types.js';
+import { fillLayoutIntoIR } from './layout.js';
 
 // ─── wgsl_reflect type shims ─────────────────────────────────────────────────
 // wgsl_reflect doesn't ship full TS types for its internal structures; we use
@@ -317,7 +317,8 @@ function rawBindingToBinding(
       name: raw.name,
       resource: {
         kind: 'buffer',
-        addressSpace: addressSpace === 'storage' && access === 'read' ? 'read_only_storage' : addressSpace,
+        addressSpace:
+          addressSpace === 'storage' && access === 'read' ? 'read_only_storage' : addressSpace,
         ...(access !== undefined && { access }),
         type: typeRef,
         minBindingSize,
@@ -394,8 +395,8 @@ function wrEntryToEntryPoint(
   if (wsAttr?.value != null) {
     const raw = Array.isArray(wsAttr.value) ? wsAttr.value : [wsAttr.value];
     workgroupSize = raw.map((v: string) => {
-      const n = parseInt(v, 10);
-      return isNaN(n) ? { override: v } : n;
+      const n = Number.parseInt(v, 10);
+      return Number.isNaN(n) ? { override: v } : n;
     });
   }
 
@@ -414,6 +415,9 @@ function wrEntryToEntryPoint(
     ...(workgroupSize !== undefined && { workgroupSize }),
     inputs,
     outputs: [],
-    bindingsUsed: (e.resources ?? []).map((r: WRBindingRef) => ({ group: r.group, binding: r.binding })),
+    bindingsUsed: (e.resources ?? []).map((r: WRBindingRef) => ({
+      group: r.group,
+      binding: r.binding,
+    })),
   };
 }

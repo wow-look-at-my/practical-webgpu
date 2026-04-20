@@ -4,13 +4,13 @@
  */
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, relative, resolve, join, extname, basename } from 'node:path';
-import { discover } from './pipeline/discover.js';
-import { preprocess, computeSourceHash } from './pipeline/preprocess.js';
-import { normalize } from './pipeline/normalize.js';
-import { emitTsModule } from './pipeline/emit/ts-module.js';
-import { sha256, normalizeLF } from './util/formatter.js';
+import { dirname, relative, resolve } from 'node:path';
 import type { CodegenConfig } from './config.js';
+import { discover } from './pipeline/discover.js';
+import { emitTsModule } from './pipeline/emit/ts-module.js';
+import { normalize } from './pipeline/normalize.js';
+import { computeSourceHash, preprocess } from './pipeline/preprocess.js';
+import { normalizeLF } from './util/formatter.js';
 
 export { defineConfig, DEFAULT_CONFIG } from './config.js';
 export type { CodegenConfig } from './config.js';
@@ -27,7 +27,11 @@ export async function runCodegen(config: CodegenConfig, cwd: string): Promise<Co
 
   for (const shader of shaders) {
     const absIncludePaths = config.includePaths.map((p) => resolve(cwd, p));
-    const { source: expanded, includes } = await preprocess(shader.path, shader.source, absIncludePaths);
+    const { source: expanded, includes } = await preprocess(
+      shader.path,
+      shader.source,
+      absIncludePaths,
+    );
     const sourceHash = await computeSourceHash(shader.path, shader.source, includes);
 
     const ir = normalize(
@@ -45,7 +49,7 @@ export async function runCodegen(config: CodegenConfig, cwd: string): Promise<Co
 
     if (config.emit.json) {
       const jsonPath = outPath.replace(/\.ts$/, '.refl.json');
-      await writeIfChanged(jsonPath, JSON.stringify(ir, null, 2) + '\n');
+      await writeIfChanged(jsonPath, `${JSON.stringify(ir, null, 2)}\n`);
     }
   }
 

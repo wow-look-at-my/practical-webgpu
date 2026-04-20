@@ -26,7 +26,11 @@ export function createTypedBuffer<Tag extends string, View extends StructView>(
 ): TypedGPUBuffer<Tag, View> {
   const { device, tag, byteSize, elementCount, usage, label, viewAt } = opts;
   const cpuBuffer = new ArrayBuffer(byteSize);
-  const buffer = device.createBuffer({ ...(label !== undefined && { label }), size: byteSize, usage });
+  const buffer = device.createBuffer({
+    ...(label !== undefined && { label }),
+    size: byteSize,
+    usage,
+  });
   return {
     [_gpuBufTag]: tag as Tag,
     buffer,

@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
-import { resolve, relative } from 'node:path';
+import { relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { Command } from 'commander';
 import { watch } from 'chokidar';
-import { runCodegen, DEFAULT_CONFIG, defineConfig } from './index.js';
+import { Command } from 'commander';
+import type { CodegenConfig } from './config.js';
+import { DEFAULT_CONFIG, runCodegen } from './index.js';
 import { normalize } from './pipeline/normalize.js';
 import { preprocess } from './pipeline/preprocess.js';
-import { emitTsModule } from './pipeline/emit/ts-module.js';
-import type { CodegenConfig } from './config.js';
 
 const program = new Command();
 
@@ -86,7 +85,7 @@ program.parse();
 async function loadConfig(configPath: string): Promise<CodegenConfig> {
   const absPath = resolve(configPath);
   try {
-    const mod = await import(pathToFileURL(absPath).href) as { default?: CodegenConfig };
+    const mod = (await import(pathToFileURL(absPath).href)) as { default?: CodegenConfig };
     return mod.default ?? DEFAULT_CONFIG;
   } catch {
     return DEFAULT_CONFIG;

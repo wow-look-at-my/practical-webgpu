@@ -24,7 +24,13 @@ export async function preprocess(
   const includedPaths = new Set<string>();
   const includedList: string[] = [];
 
-  const expanded = await expandIncludes(source, filePath, includedPaths, includedList, extraIncludePaths);
+  const expanded = await expandIncludes(
+    source,
+    filePath,
+    includedPaths,
+    includedList,
+    extraIncludePaths,
+  );
   return { source: expanded, includes: includedList };
 }
 
@@ -61,7 +67,13 @@ async function expandIncludes(
       ];
       let resolvedPath: string | null = null;
       for (const candidate of candidates) {
-        try { await access(candidate); resolvedPath = candidate; break; } catch { /* try next */ }
+        try {
+          await access(candidate);
+          resolvedPath = candidate;
+          break;
+        } catch {
+          /* try next */
+        }
       }
       if (!resolvedPath) {
         throw new Error(
@@ -76,7 +88,13 @@ async function expandIncludes(
       includedList.push(resolvedPath);
 
       const includedSource = await readFile(resolvedPath, 'utf8');
-      const expanded = await expandIncludes(includedSource, resolvedPath, includedPaths, includedList, extraIncludePaths);
+      const expanded = await expandIncludes(
+        includedSource,
+        resolvedPath,
+        includedPaths,
+        includedList,
+        extraIncludePaths,
+      );
       resultLines.push(expanded);
       continue;
     }

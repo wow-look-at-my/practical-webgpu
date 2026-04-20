@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import type { ReflectionIR, StructDef, TypeDef } from '../src/ir/types.js';
 import { fillLayoutIntoIR } from '../src/pipeline/layout.js';
-import type { ReflectionIR, TypeDef, StructDef } from '../src/ir/types.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function makeIR(
-  types: TypeDef[],
-  structs: StructDef[] = [],
-): ReflectionIR {
+function makeIR(types: TypeDef[], structs: StructDef[] = []): ReflectionIR {
   return {
     version: 1,
     source: { path: 'test', sha256: '', includes: [] },
@@ -23,8 +20,8 @@ function makeIR(
   };
 }
 
-const f32Idx = 0; // index of f32 in most tests
-const u32Idx = 1;
+const _f32Idx = 0; // index of f32 in most tests
+const _u32Idx = 1;
 
 // ─── Scalars ─────────────────────────────────────────────────────────────────
 

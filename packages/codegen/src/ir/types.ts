@@ -103,13 +103,7 @@ export interface SamplerBindingResource {
 }
 
 export type TextureSampleType = 'float' | 'unfilterable-float' | 'depth' | 'sint' | 'uint';
-export type TextureViewDimension =
-  | '1d'
-  | '2d'
-  | '2d-array'
-  | 'cube'
-  | 'cube-array'
-  | '3d';
+export type TextureViewDimension = '1d' | '2d' | '2d-array' | 'cube' | 'cube-array' | '3d';
 
 export interface TextureBindingResource {
   kind: 'texture';
