@@ -32,7 +32,7 @@ export async function runCodegen(config: CodegenConfig, cwd: string): Promise<Co
       shader.source,
       absIncludePaths,
     );
-    const sourceHash = await computeSourceHash(shader.path, shader.source, includes);
+    const sourceHash = await computeSourceHash(shader.source, includes);
 
     const ir = normalize(
       relative(cwd, shader.path),

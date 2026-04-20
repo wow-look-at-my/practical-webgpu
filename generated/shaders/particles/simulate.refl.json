@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "path": "shaders/particles/simulate.wgsl",
-    "sha256": "9191326948338c74a783b4661fd6125402f4f1ac83e0eef9cb4c15b55184e14e",
+    "sha256": "3045a04d770fe379ea1d7f9c53795e077d98b95302d4ac9090a3acb855a191be",
     "includes": [
       "shaders/common/camera.wgsli"
     ]

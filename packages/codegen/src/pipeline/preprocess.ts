@@ -108,14 +108,12 @@ async function expandIncludes(
 /**
  * Computes a combined sha256 of the source and all its transitive includes.
  * Changes to any included file invalidate the codegen output.
+ *
+ * Deterministic across machines: hashes content only, never absolute paths.
  */
-export async function computeSourceHash(
-  filePath: string,
-  source: string,
-  includes: string[],
-): Promise<string> {
+export async function computeSourceHash(source: string, includes: string[]): Promise<string> {
   const parts: string[] = [sha256(source)];
-  for (const inc of includes) {
+  for (const inc of includes.slice().sort()) {
     try {
       const content = await readFile(inc, 'utf8');
       parts.push(sha256(content));
@@ -123,5 +121,5 @@ export async function computeSourceHash(
       // ignore — error would have been caught in expandIncludes
     }
   }
-  return sha256(parts.join('|') + filePath);
+  return sha256(parts.join('|'));
 }
