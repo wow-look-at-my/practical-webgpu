@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "source": {
+    "path": "shaders/particles/simulate.wgsl",
+    "sha256": "3045a04d770fe379ea1d7f9c53795e077d98b95302d4ac9090a3acb855a191be",
+    "includes": [
+      "shaders/common/camera.wgsli"
+    ]
+  },
+  "enables": [],
+  "requires": [],
+  "overrides": [],
+  "types": [
+    {
+      "kind": "scalar",
+      "name": "f32",
+      "size": 4,
+      "align": 4
+    },
+    {
+      "kind": "mat",
+      "cols": 4,
+      "rows": 4,
+      "elem": 0,
+      "size": 64,
+      "align": 16,
+      "colStride": 16
+    },
+    {
+      "kind": "struct",
+      "ref": 0
+    },
+    {
+      "kind": "vec",
+      "n": 3,
+      "elem": 0,
+      "size": 12,
+      "align": 16
+    },
+    {
+      "kind": "struct",
+      "ref": 1
+    },
+    {
+      "kind": "array",
+      "elem": 4,
+      "count": null,
+      "stride": 32,
+      "size": 0,
+      "align": 16
+    },
+    {
+      "kind": "scalar",
+      "name": "u32",
+      "size": 4,
+      "align": 4
+    },
+    {
+      "kind": "vec",
+      "n": 3,
+      "elem": 6,
+      "size": 12,
+      "align": 16
+    }
+  ],
+  "structs": [
+    {
+      "name": "Camera",
+      "size": 128,
+      "align": 16,
+      "members": [
+        {
+          "name": "view",
+          "type": 1,
+          "offset": 0,
+          "size": 64,
+          "align": 16
+        },
+        {
+          "name": "proj",
+          "type": 1,
+          "offset": 64,
+          "size": 64,
+          "align": 16
+        }
+      ]
+    },
+    {
+      "name": "Particle",
+      "size": 32,
+      "align": 16,
+      "members": [
+        {
+          "name": "pos",
+          "type": 3,
+          "offset": 0,
+          "size": 12,
+          "align": 16
+        },
+        {
+          "name": "vel",
+          "type": 3,
+          "offset": 16,
+          "size": 12,
+          "align": 16
+        },
+        {
+          "name": "life",
+          "type": 0,
+          "offset": 28,
+          "size": 4,
+          "align": 4
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "group": 0,
+      "binding": 0,
+      "name": "camera",
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "uniform",
+        "type": 2,
+        "minBindingSize": 128
+      },
+      "stages": []
+    },
+    {
+      "group": 0,
+      "binding": 1,
+      "name": "particles",
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "type": 5,
+        "minBindingSize": 0
+      },
+      "stages": []
+    }
+  ],
+  "bindGroups": [
+    {
+      "group": 0,
+      "bindings": [
+        {
+          "group": 0,
+          "binding": 0,
+          "name": "camera",
+          "resource": {
+            "kind": "buffer",
+            "addressSpace": "uniform",
+            "type": 2,
+            "minBindingSize": 128
+          },
+          "stages": []
+        },
+        {
+          "group": 0,
+          "binding": 1,
+          "name": "particles",
+          "resource": {
+            "kind": "buffer",
+            "addressSpace": "storage",
+            "access": "read_write",
+            "type": 5,
+            "minBindingSize": 0
+          },
+          "stages": []
+        }
+      ]
+    }
+  ],
+  "vertexInputs": [],
+  "entries": [
+    {
+      "name": "main",
+      "stage": "compute",
+      "workgroupSize": [
+        64
+      ],
+      "inputs": [
+        {
+          "name": "gid",
+          "type": 7,
+          "builtin": "global_invocation_id"
+        }
+      ],
+      "outputs": [],
+      "bindingsUsed": [
+        {
+          "group": 0,
+          "binding": 1
+        }
+      ]
+    }
+  ]
+}

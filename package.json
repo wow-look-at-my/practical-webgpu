@@ -1,0 +1,26 @@
+{
+  "name": "practical-webgpu",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "biome check . && pnpm -r typecheck",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "codegen": "tsx packages/codegen/src/cli.ts build",
+    "codegen:check": "tsx packages/codegen/src/cli.ts build --check",
+    "codegen:watch": "tsx packages/codegen/src/cli.ts watch"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@biomejs/biome", "esbuild"]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@webgpu/types": "^0.1.53",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}
