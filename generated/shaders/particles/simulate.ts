@@ -1,4 +1,4 @@
-// AUTO-GENERATED — DO NOT EDIT. Source: shaders/particles/simulate.wgsl  sha256: 3045a04d770fe379
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/particles/simulate.wgsl  sha256: a1b0bcd0ccde65fb
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -26,7 +26,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   particles[i].life -= 0.01;
 }
 `;
-export const SOURCE_SHA256 = '3045a04d770fe379ea1d7f9c53795e077d98b95302d4ac9090a3acb855a191be';
+export const SOURCE_SHA256 = 'a1b0bcd0ccde65fb104d2bab00624443ae30191f004ee4cba2df4d0755a4e632';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const Camera = {
@@ -166,7 +166,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/particles/simulate.wgsl",
-    sha256: "3045a04d770fe379ea1d7f9c53795e077d98b95302d4ac9090a3acb855a191be",
+    sha256: "a1b0bcd0ccde65fb104d2bab00624443ae30191f004ee4cba2df4d0755a4e632",
     includes: [
       "shaders/common/camera.wgsli"
     ]

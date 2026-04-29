@@ -5,7 +5,8 @@
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
-import type { CodegenConfig } from './config.js';
+import picomatch from 'picomatch';
+import type { CodegenConfig, DefineMap } from './config.js';
 import { discover } from './pipeline/discover.js';
 import { emitTsModule } from './pipeline/emit/ts-module.js';
 import { normalize } from './pipeline/normalize.js';
@@ -27,15 +28,17 @@ export async function runCodegen(config: CodegenConfig, cwd: string): Promise<Co
 
   for (const shader of shaders) {
     const absIncludePaths = config.includePaths.map((p) => resolve(cwd, p));
-    const { source: expanded, includes } = await preprocess(
-      shader.path,
-      shader.source,
-      absIncludePaths,
-    );
-    const sourceHash = await computeSourceHash(shader.source, includes);
+    const relPath = relative(cwd, shader.path);
+    const defines = resolveShaderDefines(relPath, config);
+
+    const { source: expanded, includes } = await preprocess(shader.path, shader.source, {
+      extraIncludePaths: absIncludePaths,
+      defines,
+    });
+    const sourceHash = await computeSourceHash(shader.source, includes, { defines });
 
     const ir = normalize(
-      relative(cwd, shader.path),
+      relPath,
       sourceHash,
       includes.map((p) => relative(cwd, p)),
       expanded,
@@ -54,6 +57,23 @@ export async function runCodegen(config: CodegenConfig, cwd: string): Promise<Co
   }
 
   return results;
+}
+
+/**
+ * Merge global `config.defines` with the first matching `shaderDefines` entry
+ * for the given shader path. The shader path is the source path relative to
+ * cwd. Glob matching uses picomatch.
+ */
+function resolveShaderDefines(relPath: string, config: CodegenConfig): DefineMap {
+  let merged: DefineMap = { ...config.defines };
+  for (const entry of config.shaderDefines) {
+    const matcher = picomatch(entry.match);
+    if (matcher(relPath)) {
+      merged = { ...merged, ...entry.defines };
+      break;
+    }
+  }
+  return merged;
 }
 
 function resolveOutputPath(shaderPath: string, cwd: string, config: CodegenConfig): string {
