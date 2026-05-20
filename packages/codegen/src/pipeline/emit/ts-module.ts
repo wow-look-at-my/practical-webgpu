@@ -359,9 +359,7 @@ function emitBindGroupLayout(ir: ReflectionIR, bg: BindGroupLayout): string {
 
 function emitBindGroupEntry(_ir: ReflectionIR, b: Binding): string {
   const visibility =
-    b.stages.length > 0
-      ? b.stages.map(stageToGPUFlag).join(' | ')
-      : 'GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT';
+    b.stages.length > 0 ? b.stages.map(stageToGPUFlag).join(' | ') : 'GPUShaderStage.COMPUTE';
 
   if (b.resource.kind === 'buffer') {
     const res = b.resource;

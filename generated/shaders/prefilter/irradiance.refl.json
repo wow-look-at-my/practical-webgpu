@@ -71,7 +71,9 @@
         "sampleType": "float",
         "multisampled": false
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -81,7 +83,9 @@
         "kind": "sampler",
         "samplerType": "filtering"
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -93,7 +97,9 @@
         "access": "write-only",
         "viewDimension": "2d"
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -105,7 +111,9 @@
         "type": 1,
         "minBindingSize": 12
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     }
   ],
   "bindGroups": [
@@ -122,7 +130,9 @@
             "sampleType": "float",
             "multisampled": false
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -132,7 +142,9 @@
             "kind": "sampler",
             "samplerType": "filtering"
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -144,7 +156,9 @@
             "access": "write-only",
             "viewDimension": "2d"
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -156,7 +170,9 @@
             "type": 1,
             "minBindingSize": 12
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         }
       ]
     }

@@ -167,10 +167,10 @@ export function writeParams(device: GPUDevice, buf: ParamsBuffer, value: { face:
 export const bindGroupLayouts = {
   group0: {
     entries: [
-      { binding: 0, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, texture: { viewDimension: 'cube', sampleType: 'float', multisampled: false } },
-      { binding: 1, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } },
-      { binding: 2, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
-      { binding: 3, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', minBindingSize: 16 } }
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, texture: { viewDimension: 'cube', sampleType: 'float', multisampled: false } },
+      { binding: 1, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'filtering' } },
+      { binding: 2, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
+      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', minBindingSize: 16 } }
     ],
   } satisfies GPUBindGroupLayoutDescriptor,
 } as const;
@@ -307,7 +307,9 @@ export const reflection = {
         sampleType: "float",
         multisampled: false
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -317,7 +319,9 @@ export const reflection = {
         kind: "sampler",
         samplerType: "filtering"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -329,7 +333,9 @@ export const reflection = {
         access: "write-only",
         viewDimension: "2d"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -341,7 +347,9 @@ export const reflection = {
         type: 2,
         minBindingSize: 16
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     }
   ],
   bindGroups: [
@@ -358,7 +366,9 @@ export const reflection = {
             sampleType: "float",
             multisampled: false
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -368,7 +378,9 @@ export const reflection = {
             kind: "sampler",
             samplerType: "filtering"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -380,7 +392,9 @@ export const reflection = {
             access: "write-only",
             viewDimension: "2d"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -392,7 +406,9 @@ export const reflection = {
             type: 2,
             minBindingSize: 16
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         }
       ]
     }

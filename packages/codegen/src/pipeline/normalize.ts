@@ -266,6 +266,16 @@ export function normalize(
     entries.push(wrEntryToEntryPoint(e as WREntry, intern, structs, structNameToIndex));
   }
 
+  // ── 4b. Populate binding stages from entry point cross-references ──
+  for (const ep of entries) {
+    for (const ref of ep.bindingsUsed) {
+      const b = bindings.find((x) => x.group === ref.group && x.binding === ref.binding);
+      if (b && !b.stages.includes(ep.stage)) {
+        b.stages.push(ep.stage);
+      }
+    }
+  }
+
   // ── 5. Build IR and fill layout ──
   const ir: ReflectionIR = {
     version: 1,

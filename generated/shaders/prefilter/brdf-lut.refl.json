@@ -63,7 +63,9 @@
         "access": "write-only",
         "viewDimension": "2d"
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -75,7 +77,9 @@
         "type": 1,
         "minBindingSize": 8
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     }
   ],
   "bindGroups": [
@@ -92,7 +96,9 @@
             "access": "write-only",
             "viewDimension": "2d"
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -104,7 +110,9 @@
             "type": 1,
             "minBindingSize": 8
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         }
       ]
     }

@@ -135,8 +135,8 @@ export function writeParams(device: GPUDevice, buf: ParamsBuffer, value: { size:
 export const bindGroupLayouts = {
   group0: {
     entries: [
-      { binding: 0, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
-      { binding: 1, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', minBindingSize: 8 } }
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
+      { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', minBindingSize: 8 } }
     ],
   } satisfies GPUBindGroupLayoutDescriptor,
 } as const;
@@ -250,7 +250,9 @@ export const reflection = {
         access: "write-only",
         viewDimension: "2d"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -262,7 +264,9 @@ export const reflection = {
         type: 1,
         minBindingSize: 8
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     }
   ],
   bindGroups: [
@@ -279,7 +283,9 @@ export const reflection = {
             access: "write-only",
             viewDimension: "2d"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -291,7 +297,9 @@ export const reflection = {
             type: 1,
             minBindingSize: 8
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         }
       ]
     }

@@ -112,8 +112,8 @@ export function writeParticlesBatch(device: GPUDevice, buf: ParticlesBuffer, val
 export const bindGroupLayouts = {
   group0: {
     entries: [
-      { binding: 0, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', minBindingSize: 128 } },
-      { binding: 1, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'storage' } }
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', minBindingSize: 128 } },
+      { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
     ],
   } satisfies GPUBindGroupLayoutDescriptor,
 } as const;
@@ -302,7 +302,9 @@ export const reflection = {
         type: 5,
         minBindingSize: 0
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     }
   ],
   bindGroups: [
@@ -332,7 +334,9 @@ export const reflection = {
             type: 5,
             minBindingSize: 0
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         }
       ]
     }
