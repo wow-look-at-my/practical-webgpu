@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "path": "shaders/prefilter/irradiance.wgsl",
-    "sha256": "cb5184656b64a85b13444f11c5faf6d2e0bb124dfa3d07af2198887965192f04",
+    "sha256": "d93e2da547d115e932edd842d51c08f83757c0155d7a554c08762d5ec96e7f25",
     "includes": [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
@@ -71,7 +71,9 @@
         "sampleType": "float",
         "multisampled": false
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -81,7 +83,9 @@
         "kind": "sampler",
         "samplerType": "filtering"
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -93,7 +97,9 @@
         "access": "write-only",
         "viewDimension": "2d"
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -105,7 +111,9 @@
         "type": 1,
         "minBindingSize": 12
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     }
   ],
   "bindGroups": [
@@ -122,7 +130,9 @@
             "sampleType": "float",
             "multisampled": false
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -132,7 +142,9 @@
             "kind": "sampler",
             "samplerType": "filtering"
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -144,7 +156,9 @@
             "access": "write-only",
             "viewDimension": "2d"
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -156,7 +170,9 @@
             "type": 1,
             "minBindingSize": 12
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         }
       ]
     }

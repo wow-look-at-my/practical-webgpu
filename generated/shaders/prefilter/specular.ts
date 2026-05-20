@@ -1,4 +1,4 @@
-// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/specular.wgsl  sha256: c1cd31700a7a4d70
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/specular.wgsl  sha256: 52c8a9933d128197
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -34,6 +34,13 @@ fn importance_sample_ggx(xi: vec2<f32>, roughness: f32, n: vec3<f32>) -> vec3<f3
   let bitangent = cross(n, tangent);
 
   return normalize(tangent * h_tangent.x + bitangent * h_tangent.y + n * h_tangent.z);
+}
+
+fn distribution_ggx(n_dot_h: f32, roughness: f32) -> f32 {
+  let a = roughness * roughness;
+  let a2 = a * a;
+  let denom = n_dot_h * n_dot_h * (a2 - 1.0) + 1.0;
+  return a2 / (PI * denom * denom);
 }
 
 fn geometry_schlick_ggx(n_dot_v: f32, roughness: f32) -> f32 {
@@ -75,6 +82,7 @@ struct SpecularParams {
   roughness: f32,
   output_size: u32,
   sample_count: u32,
+  input_size: u32,
 }
 
 @group(0) @binding(0) var env_cubemap: texture_cube<f32>;
@@ -102,7 +110,15 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let n_dot_l = max(dot(n, l), 0.0);
 
     if (n_dot_l > 0.0) {
-      let sample_color = textureSampleLevel(env_cubemap, env_sampler, l, 0.0);
+      let n_dot_h = max(dot(n, h), 0.0);
+      let h_dot_v = max(dot(h, v), 0.001);
+      let d = distribution_ggx(n_dot_h, roughness);
+      let pdf = d * n_dot_h / (4.0 * h_dot_v);
+      let sa_texel = 4.0 * PI / (6.0 * f32(params.input_size) * f32(params.input_size));
+      let sa_sample = 1.0 / (f32(params.sample_count) * pdf + 0.0001);
+      let mip_level = max(0.5 * log2(sa_sample / sa_texel), 0.0);
+
+      let sample_color = textureSampleLevel(env_cubemap, env_sampler, l, mip_level);
       color += sample_color.rgb * n_dot_l;
       total_weight += n_dot_l;
     }
@@ -115,28 +131,30 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, vec4<f32>(color, 1.0));
 }
 `;
-export const SOURCE_SHA256 = 'c1cd31700a7a4d7029c9beed1dfb6836f1ff7e09a6f7a5850a3f34e9d6944d77';
+export const SOURCE_SHA256 = '52c8a9933d128197fdb7275022dabfcd5eba6bff2d7b3f63998bf80e7780e46a';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const SpecularParams = {
-  size: 16,
+  size: 20,
   align: 4,
   offsets: {
     face: 0,
     roughness: 4,
     output_size: 8,
-    sample_count: 12
+    sample_count: 12,
+    input_size: 16
   } as const,
   sizes: {
     face: 4,
     roughness: 4,
     output_size: 4,
-    sample_count: 4
+    sample_count: 4,
+    input_size: 4
   } as const,
 } as const;
 
 export class SpecularParamsView extends StructView {
-  static readonly BYTE_SIZE = 16;
+  static readonly BYTE_SIZE = 20;
 
   get face(): number { return this.u32(SpecularParams.offsets.face); }
   set face(v: number) { this.setU32(SpecularParams.offsets.face, v); }
@@ -149,28 +167,32 @@ export class SpecularParamsView extends StructView {
 
   get sample_count(): number { return this.u32(SpecularParams.offsets.sample_count); }
   set sample_count(v: number) { this.setU32(SpecularParams.offsets.sample_count, v); }
+
+  get input_size(): number { return this.u32(SpecularParams.offsets.input_size); }
+  set input_size(v: number) { this.setU32(SpecularParams.offsets.input_size, v); }
 }
 
 export type ParamsBuffer = TypedGPUBuffer<'SpecularParams', SpecularParamsView>;
 export function createParamsBuffer(device: GPUDevice, opts?: { label?: string }): ParamsBuffer {
   return createTypedBuffer({ device, tag: 'SpecularParams', byteSize: SpecularParamsView.BYTE_SIZE, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, ...(opts?.label !== undefined && { label: opts.label }), viewAt: (buf, off) => new SpecularParamsView(buf, off) });
 }
-export function writeParams(device: GPUDevice, buf: ParamsBuffer, value: { face: number; roughness: number; output_size: number; sample_count: number }): void {
+export function writeParams(device: GPUDevice, buf: ParamsBuffer, value: { face: number; roughness: number; output_size: number; sample_count: number; input_size: number }): void {
   const v = buf.viewAt();
   v.face = value.face;
   v.roughness = value.roughness;
   v.output_size = value.output_size;
   v.sample_count = value.sample_count;
+  v.input_size = value.input_size;
   device.queue.writeBuffer(buf.buffer, 0, buf.cpuBuffer);
 }
 
 export const bindGroupLayouts = {
   group0: {
     entries: [
-      { binding: 0, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, texture: { viewDimension: 'cube', sampleType: 'float', multisampled: false } },
-      { binding: 1, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } },
-      { binding: 2, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
-      { binding: 3, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', minBindingSize: 16 } }
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, texture: { viewDimension: 'cube', sampleType: 'float', multisampled: false } },
+      { binding: 1, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'filtering' } },
+      { binding: 2, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
+      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', minBindingSize: 20 } }
     ],
   } satisfies GPUBindGroupLayoutDescriptor,
 } as const;
@@ -225,7 +247,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/specular.wgsl",
-    sha256: "c1cd31700a7a4d7029c9beed1dfb6836f1ff7e09a6f7a5850a3f34e9d6944d77",
+    sha256: "52c8a9933d128197fdb7275022dabfcd5eba6bff2d7b3f63998bf80e7780e46a",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
@@ -262,7 +284,7 @@ export const reflection = {
   structs: [
     {
       name: "SpecularParams",
-      size: 16,
+      size: 20,
       align: 4,
       members: [
         {
@@ -292,6 +314,13 @@ export const reflection = {
           offset: 12,
           size: 4,
           align: 4
+        },
+        {
+          name: "input_size",
+          type: 0,
+          offset: 16,
+          size: 4,
+          align: 4
         }
       ]
     }
@@ -307,7 +336,9 @@ export const reflection = {
         sampleType: "float",
         multisampled: false
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -317,7 +348,9 @@ export const reflection = {
         kind: "sampler",
         samplerType: "filtering"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -329,7 +362,9 @@ export const reflection = {
         access: "write-only",
         viewDimension: "2d"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -339,9 +374,11 @@ export const reflection = {
         kind: "buffer",
         addressSpace: "uniform",
         type: 2,
-        minBindingSize: 16
+        minBindingSize: 20
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     }
   ],
   bindGroups: [
@@ -358,7 +395,9 @@ export const reflection = {
             sampleType: "float",
             multisampled: false
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -368,7 +407,9 @@ export const reflection = {
             kind: "sampler",
             samplerType: "filtering"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -380,7 +421,9 @@ export const reflection = {
             access: "write-only",
             viewDimension: "2d"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -390,9 +433,11 @@ export const reflection = {
             kind: "buffer",
             addressSpace: "uniform",
             type: 2,
-            minBindingSize: 16
+            minBindingSize: 20
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         }
       ]
     }

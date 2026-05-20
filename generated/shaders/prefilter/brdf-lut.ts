@@ -1,4 +1,4 @@
-// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/brdf-lut.wgsl  sha256: 3d42f76b8bcf92e3
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/brdf-lut.wgsl  sha256: c3363944a5ac5fa4
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -34,6 +34,13 @@ fn importance_sample_ggx(xi: vec2<f32>, roughness: f32, n: vec3<f32>) -> vec3<f3
   let bitangent = cross(n, tangent);
 
   return normalize(tangent * h_tangent.x + bitangent * h_tangent.y + n * h_tangent.z);
+}
+
+fn distribution_ggx(n_dot_h: f32, roughness: f32) -> f32 {
+  let a = roughness * roughness;
+  let a2 = a * a;
+  let denom = n_dot_h * n_dot_h * (a2 - 1.0) + 1.0;
+  return a2 / (PI * denom * denom);
 }
 
 fn geometry_schlick_ggx(n_dot_v: f32, roughness: f32) -> f32 {
@@ -95,7 +102,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_lut, gid.xy, vec4<f32>(scale, bias, 0.0, 1.0));
 }
 `;
-export const SOURCE_SHA256 = '3d42f76b8bcf92e3ee3dbd9b54f7c4bdf4fe1063575cd1eef9da744fde5f9756';
+export const SOURCE_SHA256 = 'c3363944a5ac5fa4dadf4c61813bdcd26a2fb7bd8e8144e704c098c21d781fe2';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const BrdfLutParams = {
@@ -135,8 +142,8 @@ export function writeParams(device: GPUDevice, buf: ParamsBuffer, value: { size:
 export const bindGroupLayouts = {
   group0: {
     entries: [
-      { binding: 0, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
-      { binding: 1, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', minBindingSize: 8 } }
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
+      { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', minBindingSize: 8 } }
     ],
   } satisfies GPUBindGroupLayoutDescriptor,
 } as const;
@@ -189,7 +196,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/brdf-lut.wgsl",
-    sha256: "3d42f76b8bcf92e3ee3dbd9b54f7c4bdf4fe1063575cd1eef9da744fde5f9756",
+    sha256: "c3363944a5ac5fa4dadf4c61813bdcd26a2fb7bd8e8144e704c098c21d781fe2",
     includes: [
       "shaders/common/sampling.wgsli"
     ]
@@ -250,7 +257,9 @@ export const reflection = {
         access: "write-only",
         viewDimension: "2d"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -262,7 +271,9 @@ export const reflection = {
         type: 1,
         minBindingSize: 8
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     }
   ],
   bindGroups: [
@@ -279,7 +290,9 @@ export const reflection = {
             access: "write-only",
             viewDimension: "2d"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -291,7 +304,9 @@ export const reflection = {
             type: 1,
             minBindingSize: 8
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         }
       ]
     }

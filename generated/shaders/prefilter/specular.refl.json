@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "path": "shaders/prefilter/specular.wgsl",
-    "sha256": "c1cd31700a7a4d7029c9beed1dfb6836f1ff7e09a6f7a5850a3f34e9d6944d77",
+    "sha256": "52c8a9933d128197fdb7275022dabfcd5eba6bff2d7b3f63998bf80e7780e46a",
     "includes": [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
@@ -39,7 +39,7 @@
   "structs": [
     {
       "name": "SpecularParams",
-      "size": 16,
+      "size": 20,
       "align": 4,
       "members": [
         {
@@ -69,6 +69,13 @@
           "offset": 12,
           "size": 4,
           "align": 4
+        },
+        {
+          "name": "input_size",
+          "type": 0,
+          "offset": 16,
+          "size": 4,
+          "align": 4
         }
       ]
     }
@@ -84,7 +91,9 @@
         "sampleType": "float",
         "multisampled": false
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -94,7 +103,9 @@
         "kind": "sampler",
         "samplerType": "filtering"
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -106,7 +117,9 @@
         "access": "write-only",
         "viewDimension": "2d"
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     },
     {
       "group": 0,
@@ -116,9 +129,11 @@
         "kind": "buffer",
         "addressSpace": "uniform",
         "type": 2,
-        "minBindingSize": 16
+        "minBindingSize": 20
       },
-      "stages": []
+      "stages": [
+        "compute"
+      ]
     }
   ],
   "bindGroups": [
@@ -135,7 +150,9 @@
             "sampleType": "float",
             "multisampled": false
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -145,7 +162,9 @@
             "kind": "sampler",
             "samplerType": "filtering"
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -157,7 +176,9 @@
             "access": "write-only",
             "viewDimension": "2d"
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         },
         {
           "group": 0,
@@ -167,9 +188,11 @@
             "kind": "buffer",
             "addressSpace": "uniform",
             "type": 2,
-            "minBindingSize": 16
+            "minBindingSize": 20
           },
-          "stages": []
+          "stages": [
+            "compute"
+          ]
         }
       ]
     }

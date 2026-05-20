@@ -1,4 +1,4 @@
-// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/equirect-to-cubemap.wgsl  sha256: 65a9591b0e9385e1
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/equirect-to-cubemap.wgsl  sha256: 22592e1e1690826b
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -34,6 +34,13 @@ fn importance_sample_ggx(xi: vec2<f32>, roughness: f32, n: vec3<f32>) -> vec3<f3
   let bitangent = cross(n, tangent);
 
   return normalize(tangent * h_tangent.x + bitangent * h_tangent.y + n * h_tangent.z);
+}
+
+fn distribution_ggx(n_dot_h: f32, roughness: f32) -> f32 {
+  let a = roughness * roughness;
+  let a2 = a * a;
+  let denom = n_dot_h * n_dot_h * (a2 - 1.0) + 1.0;
+  return a2 / (PI * denom * denom);
 }
 
 fn geometry_schlick_ggx(n_dot_v: f32, roughness: f32) -> f32 {
@@ -92,7 +99,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, color);
 }
 `;
-export const SOURCE_SHA256 = '65a9591b0e9385e104c676e2de5cdb732644e4a66b0276e6f926d1ae826a0062';
+export const SOURCE_SHA256 = '22592e1e1690826b0798f6c8b5a16c8ba575118a86782dc24782fdf6c86da606';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const EquirectParams = {
@@ -132,10 +139,10 @@ export function writeParams(device: GPUDevice, buf: ParamsBuffer, value: { face:
 export const bindGroupLayouts = {
   group0: {
     entries: [
-      { binding: 0, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, texture: { viewDimension: '2d', sampleType: 'float', multisampled: false } },
-      { binding: 1, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } },
-      { binding: 2, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
-      { binding: 3, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', minBindingSize: 8 } }
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, texture: { viewDimension: '2d', sampleType: 'float', multisampled: false } },
+      { binding: 1, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'filtering' } },
+      { binding: 2, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
+      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', minBindingSize: 8 } }
     ],
   } satisfies GPUBindGroupLayoutDescriptor,
 } as const;
@@ -190,7 +197,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/equirect-to-cubemap.wgsl",
-    sha256: "65a9591b0e9385e104c676e2de5cdb732644e4a66b0276e6f926d1ae826a0062",
+    sha256: "22592e1e1690826b0798f6c8b5a16c8ba575118a86782dc24782fdf6c86da606",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
@@ -252,7 +259,9 @@ export const reflection = {
         sampleType: "float",
         multisampled: false
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -262,7 +271,9 @@ export const reflection = {
         kind: "sampler",
         samplerType: "filtering"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -274,7 +285,9 @@ export const reflection = {
         access: "write-only",
         viewDimension: "2d"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -286,7 +299,9 @@ export const reflection = {
         type: 1,
         minBindingSize: 8
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     }
   ],
   bindGroups: [
@@ -303,7 +318,9 @@ export const reflection = {
             sampleType: "float",
             multisampled: false
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -313,7 +330,9 @@ export const reflection = {
             kind: "sampler",
             samplerType: "filtering"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -325,7 +344,9 @@ export const reflection = {
             access: "write-only",
             viewDimension: "2d"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -337,7 +358,9 @@ export const reflection = {
             type: 1,
             minBindingSize: 8
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         }
       ]
     }

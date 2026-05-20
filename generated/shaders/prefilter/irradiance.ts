@@ -1,4 +1,4 @@
-// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/irradiance.wgsl  sha256: cb5184656b64a85b
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/irradiance.wgsl  sha256: d93e2da547d115e9
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -34,6 +34,13 @@ fn importance_sample_ggx(xi: vec2<f32>, roughness: f32, n: vec3<f32>) -> vec3<f3
   let bitangent = cross(n, tangent);
 
   return normalize(tangent * h_tangent.x + bitangent * h_tangent.y + n * h_tangent.z);
+}
+
+fn distribution_ggx(n_dot_h: f32, roughness: f32) -> f32 {
+  let a = roughness * roughness;
+  let a2 = a * a;
+  let denom = n_dot_h * n_dot_h * (a2 - 1.0) + 1.0;
+  return a2 / (PI * denom * denom);
 }
 
 fn geometry_schlick_ggx(n_dot_v: f32, roughness: f32) -> f32 {
@@ -111,7 +118,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, vec4<f32>(irradiance, 1.0));
 }
 `;
-export const SOURCE_SHA256 = 'cb5184656b64a85b13444f11c5faf6d2e0bb124dfa3d07af2198887965192f04';
+export const SOURCE_SHA256 = 'd93e2da547d115e932edd842d51c08f83757c0155d7a554c08762d5ec96e7f25';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const IrradianceParams = {
@@ -157,10 +164,10 @@ export function writeParams(device: GPUDevice, buf: ParamsBuffer, value: { face:
 export const bindGroupLayouts = {
   group0: {
     entries: [
-      { binding: 0, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, texture: { viewDimension: 'cube', sampleType: 'float', multisampled: false } },
-      { binding: 1, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } },
-      { binding: 2, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
-      { binding: 3, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', minBindingSize: 12 } }
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, texture: { viewDimension: 'cube', sampleType: 'float', multisampled: false } },
+      { binding: 1, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'filtering' } },
+      { binding: 2, visibility: GPUShaderStage.COMPUTE, storageTexture: { format: 'rgba16float', access: 'write-only', viewDimension: '2d' } },
+      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', minBindingSize: 12 } }
     ],
   } satisfies GPUBindGroupLayoutDescriptor,
 } as const;
@@ -215,7 +222,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/irradiance.wgsl",
-    sha256: "cb5184656b64a85b13444f11c5faf6d2e0bb124dfa3d07af2198887965192f04",
+    sha256: "d93e2da547d115e932edd842d51c08f83757c0155d7a554c08762d5ec96e7f25",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
@@ -284,7 +291,9 @@ export const reflection = {
         sampleType: "float",
         multisampled: false
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -294,7 +303,9 @@ export const reflection = {
         kind: "sampler",
         samplerType: "filtering"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -306,7 +317,9 @@ export const reflection = {
         access: "write-only",
         viewDimension: "2d"
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     },
     {
       group: 0,
@@ -318,7 +331,9 @@ export const reflection = {
         type: 1,
         minBindingSize: 12
       },
-      stages: []
+      stages: [
+        "compute"
+      ]
     }
   ],
   bindGroups: [
@@ -335,7 +350,9 @@ export const reflection = {
             sampleType: "float",
             multisampled: false
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -345,7 +362,9 @@ export const reflection = {
             kind: "sampler",
             samplerType: "filtering"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -357,7 +376,9 @@ export const reflection = {
             access: "write-only",
             viewDimension: "2d"
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         },
         {
           group: 0,
@@ -369,7 +390,9 @@ export const reflection = {
             type: 1,
             minBindingSize: 12
           },
-          stages: []
+          stages: [
+            "compute"
+          ]
         }
       ]
     }
