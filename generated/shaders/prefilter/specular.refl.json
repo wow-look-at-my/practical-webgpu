@@ -1,0 +1,214 @@
+{
+  "version": 1,
+  "source": {
+    "path": "shaders/prefilter/specular.wgsl",
+    "sha256": "aad4ce394b77a666497fb0c8e6a65a634ad5992cf682c7121327f55f481c464a",
+    "includes": [
+      "shaders/common/sampling.wgsli",
+      "shaders/common/cubemap.wgsli"
+    ]
+  },
+  "enables": [],
+  "requires": [],
+  "overrides": [],
+  "types": [
+    {
+      "kind": "scalar",
+      "name": "u32",
+      "size": 4,
+      "align": 4
+    },
+    {
+      "kind": "scalar",
+      "name": "f32",
+      "size": 4,
+      "align": 4
+    },
+    {
+      "kind": "struct",
+      "ref": 0
+    },
+    {
+      "kind": "vec",
+      "n": 3,
+      "elem": 0,
+      "size": 12,
+      "align": 16
+    }
+  ],
+  "structs": [
+    {
+      "name": "SpecularParams",
+      "size": 16,
+      "align": 4,
+      "members": [
+        {
+          "name": "face",
+          "type": 0,
+          "offset": 0,
+          "size": 4,
+          "align": 4
+        },
+        {
+          "name": "roughness",
+          "type": 1,
+          "offset": 4,
+          "size": 4,
+          "align": 4
+        },
+        {
+          "name": "output_size",
+          "type": 0,
+          "offset": 8,
+          "size": 4,
+          "align": 4
+        },
+        {
+          "name": "sample_count",
+          "type": 0,
+          "offset": 12,
+          "size": 4,
+          "align": 4
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "group": 0,
+      "binding": 0,
+      "name": "env_cubemap",
+      "resource": {
+        "kind": "texture",
+        "viewDimension": "cube",
+        "sampleType": "float",
+        "multisampled": false
+      },
+      "stages": []
+    },
+    {
+      "group": 0,
+      "binding": 1,
+      "name": "env_sampler",
+      "resource": {
+        "kind": "sampler",
+        "samplerType": "filtering"
+      },
+      "stages": []
+    },
+    {
+      "group": 0,
+      "binding": 2,
+      "name": "output_face",
+      "resource": {
+        "kind": "storageTexture",
+        "format": "rgba16float",
+        "access": "write-only",
+        "viewDimension": "2d"
+      },
+      "stages": []
+    },
+    {
+      "group": 0,
+      "binding": 3,
+      "name": "params",
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "uniform",
+        "type": 2,
+        "minBindingSize": 16
+      },
+      "stages": []
+    }
+  ],
+  "bindGroups": [
+    {
+      "group": 0,
+      "bindings": [
+        {
+          "group": 0,
+          "binding": 0,
+          "name": "env_cubemap",
+          "resource": {
+            "kind": "texture",
+            "viewDimension": "cube",
+            "sampleType": "float",
+            "multisampled": false
+          },
+          "stages": []
+        },
+        {
+          "group": 0,
+          "binding": 1,
+          "name": "env_sampler",
+          "resource": {
+            "kind": "sampler",
+            "samplerType": "filtering"
+          },
+          "stages": []
+        },
+        {
+          "group": 0,
+          "binding": 2,
+          "name": "output_face",
+          "resource": {
+            "kind": "storageTexture",
+            "format": "rgba16float",
+            "access": "write-only",
+            "viewDimension": "2d"
+          },
+          "stages": []
+        },
+        {
+          "group": 0,
+          "binding": 3,
+          "name": "params",
+          "resource": {
+            "kind": "buffer",
+            "addressSpace": "uniform",
+            "type": 2,
+            "minBindingSize": 16
+          },
+          "stages": []
+        }
+      ]
+    }
+  ],
+  "vertexInputs": [],
+  "entries": [
+    {
+      "name": "main",
+      "stage": "compute",
+      "workgroupSize": [
+        8,
+        8
+      ],
+      "inputs": [
+        {
+          "name": "gid",
+          "type": 3,
+          "builtin": "global_invocation_id"
+        }
+      ],
+      "outputs": [],
+      "bindingsUsed": [
+        {
+          "group": 0,
+          "binding": 3
+        },
+        {
+          "group": 0,
+          "binding": 0
+        },
+        {
+          "group": 0,
+          "binding": 1
+        },
+        {
+          "group": 0,
+          "binding": 2
+        }
+      ]
+    }
+  ]
+}
