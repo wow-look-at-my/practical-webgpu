@@ -83,7 +83,7 @@ function groups(size: number): number {
 
 const DOWNSAMPLE_WGSL = `
 @group(0) @binding(0) var src: texture_2d<f32>;
-@group(0) @binding(1) var dst: texture_storage_2d<rgba16float, write>;
+@group(0) @binding(1) var dst: texture_storage_2d<rgba32float, write>;
 
 @compute @workgroup_size(8, 8)
 fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
@@ -111,7 +111,7 @@ function generateCubemapMips(
       {
         binding: 1,
         visibility: GPUShaderStage.COMPUTE,
-        storageTexture: { access: 'write-only', format: 'rgba16float', viewDimension: '2d' },
+        storageTexture: { access: 'write-only', format: 'rgba32float', viewDimension: '2d' },
       },
     ],
   });
@@ -185,7 +185,7 @@ export function prefilterEnvMap(opts: PrefilterOptions): PrefilterResult {
 
   const envCubemap = device.createTexture({
     size: [cubemapSize, cubemapSize, 6],
-    format: 'rgba16float',
+    format: 'rgba32float',
     mipLevelCount: mipLevels,
     usage:
       GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_DST,
