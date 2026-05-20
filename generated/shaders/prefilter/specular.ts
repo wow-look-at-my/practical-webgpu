@@ -1,4 +1,4 @@
-// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/specular.wgsl  sha256: aad4ce394b77a666
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/specular.wgsl  sha256: c1cd31700a7a4d70
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -115,7 +115,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, vec4<f32>(color, 1.0));
 }
 `;
-export const SOURCE_SHA256 = 'aad4ce394b77a666497fb0c8e6a65a634ad5992cf682c7121327f55f481c464a';
+export const SOURCE_SHA256 = 'c1cd31700a7a4d7029c9beed1dfb6836f1ff7e09a6f7a5850a3f34e9d6944d77';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const SpecularParams = {
@@ -225,7 +225,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/specular.wgsl",
-    sha256: "aad4ce394b77a666497fb0c8e6a65a634ad5992cf682c7121327f55f481c464a",
+    sha256: "c1cd31700a7a4d7029c9beed1dfb6836f1ff7e09a6f7a5850a3f34e9d6944d77",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"

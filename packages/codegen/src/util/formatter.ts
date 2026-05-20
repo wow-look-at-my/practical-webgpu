@@ -1,6 +1,8 @@
-import { createHash } from 'node:crypto';
+import { sha256 } from '@practical-webgpu/preprocessor';
 
-export const BANNER_PREFIX = '// AUTO-GENERATED — DO NOT EDIT.';
+export { sha256 };
+
+export const BANNER_PREFIX = '// AUTO-GENERATED -- DO NOT EDIT.';
 
 export function makeBanner(sourcePath: string, sha256: string): string {
   return `${BANNER_PREFIX} Source: ${sourcePath}  sha256: ${sha256.slice(0, 16)}\n`;
@@ -18,10 +20,6 @@ function sortedReplacer(_key: string, value: unknown): unknown {
     );
   }
   return value;
-}
-
-export function sha256(content: string): string {
-  return createHash('sha256').update(content).digest('hex');
 }
 
 /** Normalise line endings to LF. */

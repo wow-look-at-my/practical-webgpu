@@ -1,5 +1,5 @@
 {
-  "name": "@practical-webgpu/codegen",
+  "name": "@practical-webgpu/preprocessor",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,24 +9,12 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "bin": {
-    "webgpu-codegen": "./dist/cli.js"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
-  "dependencies": {
-    "@practical-webgpu/preprocessor": "workspace:*",
-    "chokidar": "^4.0.3",
-    "commander": "^13.1.0",
-    "fast-glob": "^3.3.3",
-    "picomatch": "^4.0.2",
-    "wgsl_reflect": "^1.2.3"
-  },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@types/picomatch": "^3.0.1",
     "typescript": "^5.7.3",
     "vitest": "^3.0.5"
   }
