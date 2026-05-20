@@ -1,4 +1,4 @@
-// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/irradiance.wgsl  sha256: ebecfcacaacee0e3
+// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/irradiance.wgsl  sha256: cc372c1391622d46
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -34,6 +34,13 @@ fn importance_sample_ggx(xi: vec2<f32>, roughness: f32, n: vec3<f32>) -> vec3<f3
   let bitangent = cross(n, tangent);
 
   return normalize(tangent * h_tangent.x + bitangent * h_tangent.y + n * h_tangent.z);
+}
+
+fn distribution_ggx(n_dot_h: f32, roughness: f32) -> f32 {
+  let a = roughness * roughness;
+  let a2 = a * a;
+  let denom = n_dot_h * n_dot_h * (a2 - 1.0) + 1.0;
+  return a2 / (PI * denom * denom);
 }
 
 fn geometry_schlick_ggx(n_dot_v: f32, roughness: f32) -> f32 {
@@ -111,7 +118,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, vec4<f32>(irradiance, 1.0));
 }
 `;
-export const SOURCE_SHA256 = 'ebecfcacaacee0e321574712bf75b38cb5fbeb875816b1bca77343d095597ec8';
+export const SOURCE_SHA256 = 'cc372c1391622d463c7657f872928f37c711690df4c2adf400033bf5058ecac0';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const IrradianceParams = {
@@ -215,7 +222,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/irradiance.wgsl",
-    sha256: "ebecfcacaacee0e321574712bf75b38cb5fbeb875816b1bca77343d095597ec8",
+    sha256: "cc372c1391622d463c7657f872928f37c711690df4c2adf400033bf5058ecac0",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"

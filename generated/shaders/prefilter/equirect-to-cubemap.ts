@@ -1,4 +1,4 @@
-// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/equirect-to-cubemap.wgsl  sha256: c1056835dcd284b1
+// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/equirect-to-cubemap.wgsl  sha256: f1cc60ecdadb38a5
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -34,6 +34,13 @@ fn importance_sample_ggx(xi: vec2<f32>, roughness: f32, n: vec3<f32>) -> vec3<f3
   let bitangent = cross(n, tangent);
 
   return normalize(tangent * h_tangent.x + bitangent * h_tangent.y + n * h_tangent.z);
+}
+
+fn distribution_ggx(n_dot_h: f32, roughness: f32) -> f32 {
+  let a = roughness * roughness;
+  let a2 = a * a;
+  let denom = n_dot_h * n_dot_h * (a2 - 1.0) + 1.0;
+  return a2 / (PI * denom * denom);
 }
 
 fn geometry_schlick_ggx(n_dot_v: f32, roughness: f32) -> f32 {
@@ -92,7 +99,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, color);
 }
 `;
-export const SOURCE_SHA256 = 'c1056835dcd284b1dd5803362f80ec62274ad2a4571cf5d1288d607a4d544856';
+export const SOURCE_SHA256 = 'f1cc60ecdadb38a53439d46facf20fc6de31f751651c2872a1413052581dbc3f';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const EquirectParams = {
@@ -190,7 +197,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/equirect-to-cubemap.wgsl",
-    sha256: "c1056835dcd284b1dd5803362f80ec62274ad2a4571cf5d1288d607a4d544856",
+    sha256: "f1cc60ecdadb38a53439d46facf20fc6de31f751651c2872a1413052581dbc3f",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"

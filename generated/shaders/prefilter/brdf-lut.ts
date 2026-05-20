@@ -1,4 +1,4 @@
-// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/brdf-lut.wgsl  sha256: 99a036a504155c6c
+// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/brdf-lut.wgsl  sha256: 16a0323b404f9753
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -34,6 +34,13 @@ fn importance_sample_ggx(xi: vec2<f32>, roughness: f32, n: vec3<f32>) -> vec3<f3
   let bitangent = cross(n, tangent);
 
   return normalize(tangent * h_tangent.x + bitangent * h_tangent.y + n * h_tangent.z);
+}
+
+fn distribution_ggx(n_dot_h: f32, roughness: f32) -> f32 {
+  let a = roughness * roughness;
+  let a2 = a * a;
+  let denom = n_dot_h * n_dot_h * (a2 - 1.0) + 1.0;
+  return a2 / (PI * denom * denom);
 }
 
 fn geometry_schlick_ggx(n_dot_v: f32, roughness: f32) -> f32 {
@@ -95,7 +102,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_lut, gid.xy, vec4<f32>(scale, bias, 0.0, 1.0));
 }
 `;
-export const SOURCE_SHA256 = '99a036a504155c6cf102705a0c5ec0262ccc59203b4d9b9401784eb5385d4d4c';
+export const SOURCE_SHA256 = '16a0323b404f97533137f457cd3063871b4387c79458dfad762f401b2b675605';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const BrdfLutParams = {
@@ -189,7 +196,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/brdf-lut.wgsl",
-    sha256: "99a036a504155c6cf102705a0c5ec0262ccc59203b4d9b9401784eb5385d4d4c",
+    sha256: "16a0323b404f97533137f457cd3063871b4387c79458dfad762f401b2b675605",
     includes: [
       "shaders/common/sampling.wgsli"
     ]

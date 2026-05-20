@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "path": "shaders/prefilter/specular.wgsl",
-    "sha256": "aad4ce394b77a666497fb0c8e6a65a634ad5992cf682c7121327f55f481c464a",
+    "sha256": "6c4a05c48b2b93ddedca3c5a3517746db1ef3a5611f22c133336e597dd4296a7",
     "includes": [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
@@ -39,7 +39,7 @@
   "structs": [
     {
       "name": "SpecularParams",
-      "size": 16,
+      "size": 20,
       "align": 4,
       "members": [
         {
@@ -67,6 +67,13 @@
           "name": "sample_count",
           "type": 0,
           "offset": 12,
+          "size": 4,
+          "align": 4
+        },
+        {
+          "name": "input_size",
+          "type": 0,
+          "offset": 16,
           "size": 4,
           "align": 4
         }
@@ -122,7 +129,7 @@
         "kind": "buffer",
         "addressSpace": "uniform",
         "type": 2,
-        "minBindingSize": 16
+        "minBindingSize": 20
       },
       "stages": [
         "compute"
@@ -181,7 +188,7 @@
             "kind": "buffer",
             "addressSpace": "uniform",
             "type": 2,
-            "minBindingSize": 16
+            "minBindingSize": 20
           },
           "stages": [
             "compute"

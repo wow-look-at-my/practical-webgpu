@@ -6,6 +6,7 @@ struct SpecularParams {
   roughness: f32,
   output_size: u32,
   sample_count: u32,
+  input_size: u32,
 }
 
 @group(0) @binding(0) var env_cubemap: texture_cube<f32>;
@@ -33,7 +34,15 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
     let n_dot_l = max(dot(n, l), 0.0);
 
     if (n_dot_l > 0.0) {
-      let sample_color = textureSampleLevel(env_cubemap, env_sampler, l, 0.0);
+      let n_dot_h = max(dot(n, h), 0.0);
+      let h_dot_v = max(dot(h, v), 0.001);
+      let d = distribution_ggx(n_dot_h, roughness);
+      let pdf = d * n_dot_h / (4.0 * h_dot_v);
+      let sa_texel = 4.0 * PI / (6.0 * f32(params.input_size) * f32(params.input_size));
+      let sa_sample = 1.0 / (f32(params.sample_count) * pdf + 0.0001);
+      let mip_level = max(0.5 * log2(sa_sample / sa_texel), 0.0);
+
+      let sample_color = textureSampleLevel(env_cubemap, env_sampler, l, mip_level);
       color += sample_color.rgb * n_dot_l;
       total_weight += n_dot_l;
     }

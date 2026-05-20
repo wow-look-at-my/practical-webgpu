@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "path": "shaders/prefilter/equirect-to-cubemap.wgsl",
-    "sha256": "c1056835dcd284b1dd5803362f80ec62274ad2a4571cf5d1288d607a4d544856",
+    "sha256": "f1cc60ecdadb38a53439d46facf20fc6de31f751651c2872a1413052581dbc3f",
     "includes": [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"

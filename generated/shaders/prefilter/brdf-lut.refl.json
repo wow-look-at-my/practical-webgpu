@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "path": "shaders/prefilter/brdf-lut.wgsl",
-    "sha256": "99a036a504155c6cf102705a0c5ec0262ccc59203b4d9b9401784eb5385d4d4c",
+    "sha256": "16a0323b404f97533137f457cd3063871b4387c79458dfad762f401b2b675605",
     "includes": [
       "shaders/common/sampling.wgsli"
     ]
