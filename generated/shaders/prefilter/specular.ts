@@ -1,4 +1,4 @@
-// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/specular.wgsl  sha256: e16a899a856c4aa5
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/specular.wgsl  sha256: 0c8b6e77dd126e1d
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -97,17 +97,11 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
   let uv = (vec2<f32>(gid.xy) + 0.5) / f32(size);
   let n = face_uv_to_direction(params.face, uv);
-
-  if (params.roughness < 0.001) {
-    let c = textureSampleLevel(env_cubemap, env_sampler, n, 0.0).rgb;
-    textureStore(output_face, gid.xy, vec4<f32>(c, 1.0));
-    return;
-  }
-
   let v = n;
+
   var color = vec3<f32>(0.0);
   var total_weight = 0.0;
-  let roughness = params.roughness;
+  let roughness = max(params.roughness, 0.001);
 
   for (var i = 0u; i < params.sample_count; i++) {
     let xi = hammersley(i, params.sample_count);
@@ -122,7 +116,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
       let pdf = d * n_dot_h / (4.0 * h_dot_v);
       let sa_texel = 4.0 * PI / (6.0 * f32(params.input_size) * f32(params.input_size));
       let sa_sample = 1.0 / (f32(params.sample_count) * pdf + 0.0001);
-      let mip_level = max(0.5 * log2(sa_sample / sa_texel), 0.0);
+      let mip_level = 0.5 * log2(sa_sample / sa_texel) + 1.0;
 
       let sample_color = textureSampleLevel(env_cubemap, env_sampler, l, mip_level);
       color += sample_color.rgb * n_dot_l;
@@ -137,7 +131,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, vec4<f32>(color, 1.0));
 }
 `;
-export const SOURCE_SHA256 = 'e16a899a856c4aa5e4234b66b962635149475aa2dbaa7fd37fa89fa52df4d0e8';
+export const SOURCE_SHA256 = '0c8b6e77dd126e1d58e2e5308e29e7602f7700cf3d81d28d182797214008cc08';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const SpecularParams = {
@@ -253,7 +247,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/specular.wgsl",
-    sha256: "e16a899a856c4aa5e4234b66b962635149475aa2dbaa7fd37fa89fa52df4d0e8",
+    sha256: "0c8b6e77dd126e1d58e2e5308e29e7602f7700cf3d81d28d182797214008cc08",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
