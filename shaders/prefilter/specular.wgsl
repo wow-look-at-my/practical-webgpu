@@ -21,11 +21,17 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
   let uv = (vec2<f32>(gid.xy) + 0.5) / f32(size);
   let n = face_uv_to_direction(params.face, uv);
-  let v = n;
 
+  if (params.roughness < 0.001) {
+    let c = textureSampleLevel(env_cubemap, env_sampler, n, 0.0).rgb;
+    textureStore(output_face, gid.xy, vec4<f32>(c, 1.0));
+    return;
+  }
+
+  let v = n;
   var color = vec3<f32>(0.0);
   var total_weight = 0.0;
-  let roughness = max(params.roughness, 0.001);
+  let roughness = params.roughness;
 
   for (var i = 0u; i < params.sample_count; i++) {
     let xi = hammersley(i, params.sample_count);

@@ -1,4 +1,4 @@
-// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/specular.wgsl  sha256: 52c8a9933d128197
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/specular.wgsl  sha256: e16a899a856c4aa5
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -97,11 +97,17 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
   let uv = (vec2<f32>(gid.xy) + 0.5) / f32(size);
   let n = face_uv_to_direction(params.face, uv);
-  let v = n;
 
+  if (params.roughness < 0.001) {
+    let c = textureSampleLevel(env_cubemap, env_sampler, n, 0.0).rgb;
+    textureStore(output_face, gid.xy, vec4<f32>(c, 1.0));
+    return;
+  }
+
+  let v = n;
   var color = vec3<f32>(0.0);
   var total_weight = 0.0;
-  let roughness = max(params.roughness, 0.001);
+  let roughness = params.roughness;
 
   for (var i = 0u; i < params.sample_count; i++) {
     let xi = hammersley(i, params.sample_count);
@@ -131,7 +137,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, vec4<f32>(color, 1.0));
 }
 `;
-export const SOURCE_SHA256 = '52c8a9933d128197fdb7275022dabfcd5eba6bff2d7b3f63998bf80e7780e46a';
+export const SOURCE_SHA256 = 'e16a899a856c4aa5e4234b66b962635149475aa2dbaa7fd37fa89fa52df4d0e8';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const SpecularParams = {
@@ -247,7 +253,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/specular.wgsl",
-    sha256: "52c8a9933d128197fdb7275022dabfcd5eba6bff2d7b3f63998bf80e7780e46a",
+    sha256: "e16a899a856c4aa5e4234b66b962635149475aa2dbaa7fd37fa89fa52df4d0e8",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
