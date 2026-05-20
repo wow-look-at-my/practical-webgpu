@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "path": "shaders/prefilter/specular.wgsl",
-    "sha256": "6c4a05c48b2b93ddedca3c5a3517746db1ef3a5611f22c133336e597dd4296a7",
+    "sha256": "52c8a9933d128197fdb7275022dabfcd5eba6bff2d7b3f63998bf80e7780e46a",
     "includes": [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"

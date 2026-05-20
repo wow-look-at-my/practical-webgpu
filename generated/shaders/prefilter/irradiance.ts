@@ -1,4 +1,4 @@
-// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/irradiance.wgsl  sha256: cc372c1391622d46
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/irradiance.wgsl  sha256: d93e2da547d115e9
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -118,7 +118,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, vec4<f32>(irradiance, 1.0));
 }
 `;
-export const SOURCE_SHA256 = 'cc372c1391622d463c7657f872928f37c711690df4c2adf400033bf5058ecac0';
+export const SOURCE_SHA256 = 'd93e2da547d115e932edd842d51c08f83757c0155d7a554c08762d5ec96e7f25';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const IrradianceParams = {
@@ -222,7 +222,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/irradiance.wgsl",
-    sha256: "cc372c1391622d463c7657f872928f37c711690df4c2adf400033bf5058ecac0",
+    sha256: "d93e2da547d115e932edd842d51c08f83757c0155d7a554c08762d5ec96e7f25",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"

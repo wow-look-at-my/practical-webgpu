@@ -1,4 +1,4 @@
-// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/brdf-lut.wgsl  sha256: 16a0323b404f9753
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/brdf-lut.wgsl  sha256: c3363944a5ac5fa4
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -102,7 +102,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_lut, gid.xy, vec4<f32>(scale, bias, 0.0, 1.0));
 }
 `;
-export const SOURCE_SHA256 = '16a0323b404f97533137f457cd3063871b4387c79458dfad762f401b2b675605';
+export const SOURCE_SHA256 = 'c3363944a5ac5fa4dadf4c61813bdcd26a2fb7bd8e8144e704c098c21d781fe2';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const BrdfLutParams = {
@@ -196,7 +196,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/brdf-lut.wgsl",
-    sha256: "16a0323b404f97533137f457cd3063871b4387c79458dfad762f401b2b675605",
+    sha256: "c3363944a5ac5fa4dadf4c61813bdcd26a2fb7bd8e8144e704c098c21d781fe2",
     includes: [
       "shaders/common/sampling.wgsli"
     ]

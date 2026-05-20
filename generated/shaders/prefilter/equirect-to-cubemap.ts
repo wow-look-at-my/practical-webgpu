@@ -1,4 +1,4 @@
-// AUTO-GENERATED — DO NOT EDIT. Source: shaders/prefilter/equirect-to-cubemap.wgsl  sha256: f1cc60ecdadb38a5
+// AUTO-GENERATED -- DO NOT EDIT. Source: shaders/prefilter/equirect-to-cubemap.wgsl  sha256: 22592e1e1690826b
 
 import { StructView, createTypedBuffer, bindGroupFromEntries, type TypedGPUBuffer } from '@practical-webgpu/runtime';
 
@@ -99,7 +99,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   textureStore(output_face, gid.xy, color);
 }
 `;
-export const SOURCE_SHA256 = 'f1cc60ecdadb38a53439d46facf20fc6de31f751651c2872a1413052581dbc3f';
+export const SOURCE_SHA256 = '22592e1e1690826b0798f6c8b5a16c8ba575118a86782dc24782fdf6c86da606';
 export const REQUIRED_FEATURES: readonly GPUFeatureName[] = [];
 
 export const EquirectParams = {
@@ -197,7 +197,7 @@ export const reflection = {
   version: 1,
   source: {
     path: "shaders/prefilter/equirect-to-cubemap.wgsl",
-    sha256: "f1cc60ecdadb38a53439d46facf20fc6de31f751651c2872a1413052581dbc3f",
+    sha256: "22592e1e1690826b0798f6c8b5a16c8ba575118a86782dc24782fdf6c86da606",
     includes: [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"

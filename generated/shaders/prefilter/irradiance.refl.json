@@ -2,7 +2,7 @@
   "version": 1,
   "source": {
     "path": "shaders/prefilter/irradiance.wgsl",
-    "sha256": "cc372c1391622d463c7657f872928f37c711690df4c2adf400033bf5058ecac0",
+    "sha256": "d93e2da547d115e932edd842d51c08f83757c0155d7a554c08762d5ec96e7f25",
     "includes": [
       "shaders/common/sampling.wgsli",
       "shaders/common/cubemap.wgsli"
