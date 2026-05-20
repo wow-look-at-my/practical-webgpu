@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "source": {
+    "path": "shaders/prefilter/irradiance.wgsl",
+    "sha256": "ebecfcacaacee0e321574712bf75b38cb5fbeb875816b1bca77343d095597ec8",
+    "includes": [
+      "shaders/common/sampling.wgsli",
+      "shaders/common/cubemap.wgsli"
+    ]
+  },
+  "enables": [],
+  "requires": [],
+  "overrides": [],
+  "types": [
+    {
+      "kind": "scalar",
+      "name": "u32",
+      "size": 4,
+      "align": 4
+    },
+    {
+      "kind": "struct",
+      "ref": 0
+    },
+    {
+      "kind": "vec",
+      "n": 3,
+      "elem": 0,
+      "size": 12,
+      "align": 16
+    }
+  ],
+  "structs": [
+    {
+      "name": "IrradianceParams",
+      "size": 12,
+      "align": 4,
+      "members": [
+        {
+          "name": "face",
+          "type": 0,
+          "offset": 0,
+          "size": 4,
+          "align": 4
+        },
+        {
+          "name": "output_size",
+          "type": 0,
+          "offset": 4,
+          "size": 4,
+          "align": 4
+        },
+        {
+          "name": "sample_count",
+          "type": 0,
+          "offset": 8,
+          "size": 4,
+          "align": 4
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "group": 0,
+      "binding": 0,
+      "name": "env_cubemap",
+      "resource": {
+        "kind": "texture",
+        "viewDimension": "cube",
+        "sampleType": "float",
+        "multisampled": false
+      },
+      "stages": []
+    },
+    {
+      "group": 0,
+      "binding": 1,
+      "name": "env_sampler",
+      "resource": {
+        "kind": "sampler",
+        "samplerType": "filtering"
+      },
+      "stages": []
+    },
+    {
+      "group": 0,
+      "binding": 2,
+      "name": "output_face",
+      "resource": {
+        "kind": "storageTexture",
+        "format": "rgba16float",
+        "access": "write-only",
+        "viewDimension": "2d"
+      },
+      "stages": []
+    },
+    {
+      "group": 0,
+      "binding": 3,
+      "name": "params",
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "uniform",
+        "type": 1,
+        "minBindingSize": 12
+      },
+      "stages": []
+    }
+  ],
+  "bindGroups": [
+    {
+      "group": 0,
+      "bindings": [
+        {
+          "group": 0,
+          "binding": 0,
+          "name": "env_cubemap",
+          "resource": {
+            "kind": "texture",
+            "viewDimension": "cube",
+            "sampleType": "float",
+            "multisampled": false
+          },
+          "stages": []
+        },
+        {
+          "group": 0,
+          "binding": 1,
+          "name": "env_sampler",
+          "resource": {
+            "kind": "sampler",
+            "samplerType": "filtering"
+          },
+          "stages": []
+        },
+        {
+          "group": 0,
+          "binding": 2,
+          "name": "output_face",
+          "resource": {
+            "kind": "storageTexture",
+            "format": "rgba16float",
+            "access": "write-only",
+            "viewDimension": "2d"
+          },
+          "stages": []
+        },
+        {
+          "group": 0,
+          "binding": 3,
+          "name": "params",
+          "resource": {
+            "kind": "buffer",
+            "addressSpace": "uniform",
+            "type": 1,
+            "minBindingSize": 12
+          },
+          "stages": []
+        }
+      ]
+    }
+  ],
+  "vertexInputs": [],
+  "entries": [
+    {
+      "name": "main",
+      "stage": "compute",
+      "workgroupSize": [
+        8,
+        8
+      ],
+      "inputs": [
+        {
+          "name": "gid",
+          "type": 2,
+          "builtin": "global_invocation_id"
+        }
+      ],
+      "outputs": [],
+      "bindingsUsed": [
+        {
+          "group": 0,
+          "binding": 3
+        },
+        {
+          "group": 0,
+          "binding": 0
+        },
+        {
+          "group": 0,
+          "binding": 1
+        },
+        {
+          "group": 0,
+          "binding": 2
+        }
+      ]
+    }
+  ]
+}

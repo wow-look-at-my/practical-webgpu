@@ -25,8 +25,16 @@ packages/runtime/src/
   align.ts                  # alignTo()
   bind-group.ts             # bindGroupFromEntries()
 
+packages/prefilter/src/
+  index.ts                  # prefilterEnvMap() — IBL prefilter pipeline
+
 shaders/                    # Canonical WGSL source — edit these
-  common/*.wgsli            # Shared include files
+  common/*.wgsli            # Shared include files (sampling, cubemap)
+  prefilter/                # IBL prefilter compute shaders
+    equirect-to-cubemap.wgsl
+    specular.wgsl
+    irradiance.wgsl
+    brdf-lut.wgsl
 generated/                  # COMMITTED — never hand-edit
   shaders/*/                # Mirrors shaders/ layout
 ```
@@ -69,6 +77,30 @@ discover → preprocess → normalize → fillLayoutIntoIR → emitTsModule → 
 - struct: align = max member align; size = alignTo(last offset + last size, struct align)
 - array (storage): stride = alignTo(elem size, elem align)
 - array (uniform): stride = alignTo(above, 16)
+
+## Prefilter pipeline (packages/prefilter)
+
+GPU-based IBL prefilter that accepts equirectangular OR cubemap input:
+
+```typescript
+import { prefilterEnvMap } from '@practical-webgpu/prefilter';
+
+const result = prefilterEnvMap({
+  device,
+  input: { type: 'equirectangular', texture: hdrTexture },
+  // OR: { type: 'cubemap', texture: cubemapTexture },
+  cubemapSize: 256,     // specular cubemap resolution
+  irradianceSize: 32,   // diffuse irradiance cubemap resolution
+  brdfLutSize: 256,     // BRDF LUT resolution
+  sampleCount: 1024,    // importance samples per pixel
+});
+// result.specularMap  — cubemap with mip chain (roughness levels)
+// result.irradianceMap — cubemap, single mip
+// result.brdfLut      — 2D rgba16float (scale in R, bias in G)
+```
+
+Pipeline: equirect→cubemap (if needed) → specular GGX prefilter → irradiance → BRDF LUT.
+All passes are compute shaders using importance-sampled GGX and Hammersley sequences.
 
 ## Known limitations / future work
 

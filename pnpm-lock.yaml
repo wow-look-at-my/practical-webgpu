@@ -49,6 +49,19 @@ importers:
         specifier: ^3.0.5
         version: 3.2.4(@types/node@22.19.17)(tsx@4.21.0)
 
+  packages/prefilter:
+    dependencies:
+      '@practical-webgpu/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+    devDependencies:
+      '@webgpu/types':
+        specifier: ^0.1.53
+        version: 0.1.69
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
   packages/runtime:
     devDependencies:
       '@webgpu/types':
