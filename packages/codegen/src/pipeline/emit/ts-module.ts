@@ -218,7 +218,7 @@ function emitBufferBinding(
   } else {
     lines.push(
       `export function ${factoryFn}(device: GPUDevice, opts?: { label?: string }): ${bufTypeName} {`,
-      `  return createTypedBuffer({ device, tag: '${tsTag}', byteSize: ${viewClass}.BYTE_SIZE, elementCount: undefined, usage: ${defaultUsage}, ...(opts?.label !== undefined && { label: opts.label }), viewAt: (buf, off) => new ${viewClass}(buf, off) });`,
+      `  return createTypedBuffer({ device, tag: '${tsTag}', byteSize: ${viewClass}.BYTE_SIZE, usage: ${defaultUsage}, ...(opts?.label !== undefined && { label: opts.label }), viewAt: (buf, off) => new ${viewClass}(buf, off) });`,
       '}',
     );
   }

@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "source": {
+    "path": "shaders/prefilter/brdf-lut.wgsl",
+    "sha256": "99a036a504155c6cf102705a0c5ec0262ccc59203b4d9b9401784eb5385d4d4c",
+    "includes": [
+      "shaders/common/sampling.wgsli"
+    ]
+  },
+  "enables": [],
+  "requires": [],
+  "overrides": [],
+  "types": [
+    {
+      "kind": "scalar",
+      "name": "u32",
+      "size": 4,
+      "align": 4
+    },
+    {
+      "kind": "struct",
+      "ref": 0
+    },
+    {
+      "kind": "vec",
+      "n": 3,
+      "elem": 0,
+      "size": 12,
+      "align": 16
+    }
+  ],
+  "structs": [
+    {
+      "name": "BrdfLutParams",
+      "size": 8,
+      "align": 4,
+      "members": [
+        {
+          "name": "size",
+          "type": 0,
+          "offset": 0,
+          "size": 4,
+          "align": 4
+        },
+        {
+          "name": "sample_count",
+          "type": 0,
+          "offset": 4,
+          "size": 4,
+          "align": 4
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "group": 0,
+      "binding": 0,
+      "name": "output_lut",
+      "resource": {
+        "kind": "storageTexture",
+        "format": "rgba16float",
+        "access": "write-only",
+        "viewDimension": "2d"
+      },
+      "stages": []
+    },
+    {
+      "group": 0,
+      "binding": 1,
+      "name": "params",
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "uniform",
+        "type": 1,
+        "minBindingSize": 8
+      },
+      "stages": []
+    }
+  ],
+  "bindGroups": [
+    {
+      "group": 0,
+      "bindings": [
+        {
+          "group": 0,
+          "binding": 0,
+          "name": "output_lut",
+          "resource": {
+            "kind": "storageTexture",
+            "format": "rgba16float",
+            "access": "write-only",
+            "viewDimension": "2d"
+          },
+          "stages": []
+        },
+        {
+          "group": 0,
+          "binding": 1,
+          "name": "params",
+          "resource": {
+            "kind": "buffer",
+            "addressSpace": "uniform",
+            "type": 1,
+            "minBindingSize": 8
+          },
+          "stages": []
+        }
+      ]
+    }
+  ],
+  "vertexInputs": [],
+  "entries": [
+    {
+      "name": "main",
+      "stage": "compute",
+      "workgroupSize": [
+        8,
+        8
+      ],
+      "inputs": [
+        {
+          "name": "gid",
+          "type": 2,
+          "builtin": "global_invocation_id"
+        }
+      ],
+      "outputs": [],
+      "bindingsUsed": [
+        {
+          "group": 0,
+          "binding": 1
+        },
+        {
+          "group": 0,
+          "binding": 0
+        }
+      ]
+    }
+  ]
+}

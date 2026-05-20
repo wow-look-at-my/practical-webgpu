@@ -82,7 +82,7 @@ export class ParticleView extends StructView {
 
 export type CameraBuffer = TypedGPUBuffer<'Camera', CameraView>;
 export function createCameraBuffer(device: GPUDevice, opts?: { label?: string }): CameraBuffer {
-  return createTypedBuffer({ device, tag: 'Camera', byteSize: CameraView.BYTE_SIZE, elementCount: undefined, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, ...(opts?.label !== undefined && { label: opts.label }), viewAt: (buf, off) => new CameraView(buf, off) });
+  return createTypedBuffer({ device, tag: 'Camera', byteSize: CameraView.BYTE_SIZE, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, ...(opts?.label !== undefined && { label: opts.label }), viewAt: (buf, off) => new CameraView(buf, off) });
 }
 export function writeCamera(device: GPUDevice, buf: CameraBuffer, value: { view: ArrayLike<number>; proj: ArrayLike<number> }): void {
   const v = buf.viewAt();

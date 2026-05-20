@@ -344,9 +344,9 @@ function rawBindingToBinding(
       name: raw.name,
       resource: {
         kind: 'texture',
-        viewDimension: '2d',
-        sampleType: 'float',
-        multisampled: false,
+        viewDimension: textureViewDimension(raw.type.name),
+        sampleType: textureSampleType(raw.type.format?.name),
+        multisampled: raw.type.name.includes('multisampled'),
       },
       stages: [],
     };
@@ -359,9 +359,9 @@ function rawBindingToBinding(
       name: raw.name,
       resource: {
         kind: 'storageTexture',
-        format: 'rgba8unorm',
-        access: 'write-only',
-        viewDimension: '2d',
+        format: raw.type.format?.name ?? 'rgba8unorm',
+        access: storageTextureAccess(raw.type.access),
+        viewDimension: textureViewDimension(raw.type.name),
       },
       stages: [],
     };
@@ -420,4 +420,48 @@ function wrEntryToEntryPoint(
       binding: r.binding,
     })),
   };
+}
+
+// ─── Texture helpers ─────────────────────────────────────────────────────────
+
+const VIEW_DIM_MAP: Record<string, string> = {
+  texture_1d: '1d',
+  texture_2d: '2d',
+  texture_2d_array: '2d-array',
+  texture_multisampled_2d: '2d',
+  texture_cube: 'cube',
+  texture_cube_array: 'cube-array',
+  texture_3d: '3d',
+  texture_storage_1d: '1d',
+  texture_storage_2d: '2d',
+  texture_storage_2d_array: '2d-array',
+  texture_storage_3d: '3d',
+};
+
+function textureViewDimension(
+  typeName: string,
+): '1d' | '2d' | '2d-array' | 'cube' | 'cube-array' | '3d' {
+  return (VIEW_DIM_MAP[typeName] ?? '2d') as
+    | '1d'
+    | '2d'
+    | '2d-array'
+    | 'cube'
+    | 'cube-array'
+    | '3d';
+}
+
+function textureSampleType(
+  formatName: string | undefined,
+): 'float' | 'unfilterable-float' | 'depth' | 'sint' | 'uint' {
+  if (formatName === 'i32') return 'sint';
+  if (formatName === 'u32') return 'uint';
+  return 'float';
+}
+
+function storageTextureAccess(
+  access: string | null | undefined,
+): 'write-only' | 'read-only' | 'read-write' {
+  if (access === 'read') return 'read-only';
+  if (access === 'read_write') return 'read-write';
+  return 'write-only';
 }

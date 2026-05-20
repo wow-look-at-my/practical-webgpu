@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["@webgpu/types"],
+    "noEmit": true,
+    "rootDir": "../..",
+    "paths": {
+      "@practical-webgpu/runtime": ["../runtime/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "../../generated/shaders/prefilter/**/*.ts"]
+}
