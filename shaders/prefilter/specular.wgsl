@@ -40,7 +40,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
       let pdf = d * n_dot_h / (4.0 * h_dot_v);
       let sa_texel = 4.0 * PI / (6.0 * f32(params.input_size) * f32(params.input_size));
       let sa_sample = 1.0 / (f32(params.sample_count) * pdf + 0.0001);
-      let mip_level = max(0.5 * log2(sa_sample / sa_texel), 0.0);
+      let mip_level = 0.5 * log2(sa_sample / sa_texel) + 1.0;
 
       let sample_color = textureSampleLevel(env_cubemap, env_sampler, l, mip_level);
       color += sample_color.rgb * n_dot_l;
