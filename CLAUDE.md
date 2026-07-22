@@ -69,6 +69,13 @@ discover → preprocess → normalize → fillLayoutIntoIR → emitTsModule → 
 - CI runs `pnpm codegen:check` which fails if generated files are stale
 - `SOURCE` in generated files is the EXPANDED wgsl (includes inlined) — pass directly to `device.createShaderModule()`
 
+## CI
+
+- `.github/workflows/ci.yml` — one `ci` job (pnpm 10 via `pnpm/action-setup`): frozen-lockfile install, build, `pnpm check`, `pnpm test`, `pnpm codegen:check`
+- Merging into master requires a green `all-builds` commit status on the PR head SHA — posted automatically by an org app (required-builds-manager) that aggregates every build on the SHA; no special CI job naming is needed for the gate
+- Never name a CI job `all-builds` — the org's shared actions reject any run whose workflow defines a job by that name; use a neutral name like `aggregate` if a fan-in job is ever added
+- pnpm 10+ does not read the `pnpm` field in package.json — settings such as `onlyBuiltDependencies`/`overrides` belong in `pnpm-workspace.yaml`. If `pnpm-lock.yaml` ever records an `overrides:` section, mirror it in `pnpm-workspace.yaml` or every `pnpm install --frozen-lockfile` fails with `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH`
+
 ## Layout rules (layout.ts)
 
 - Scalars: f32/i32/u32/bool = size+align 4; f16 = size+align 2
