@@ -81,67 +81,44 @@ function groups(size: number): number {
   return Math.ceil(size / WORKGROUP_SIZE);
 }
 
-const ANGULAR_DOWNSAMPLE_WGSL = `
-struct Params {
-  face: u32,
-  mip_size: u32,
+// Each dst texel averages exactly its 2x2 src texels, weighted by their
+// solid angles — a gapless partition of the source. The previous "angular"
+// downsampler took 9 sparse taps up to 4 src texels apart, leaving gaps
+// between tap footprints; spiky content (analytical lights spanning a few
+// texels) aliased into a lumpy pyramid, which the specular pass's filtered
+// importance sampling then turned into structured noise.
+const BOX_DOWNSAMPLE_WGSL = `
+@group(0) @binding(0) var src: texture_2d_array<f32>;
+@group(0) @binding(1) var dst: texture_storage_2d_array<rgba32float, write>;
+
+// Solid angle of a cubemap texel centered at face coords (u, v) in [-1, 1]
+// is proportional to (1 + u^2 + v^2)^-1.5.
+fn texel_weight(coord: vec2<i32>, size: u32) -> f32 {
+  let uv = (vec2<f32>(coord) + 0.5) / f32(size) * 2.0 - 1.0;
+  let d = 1.0 + dot(uv, uv);
+  return inverseSqrt(d * d * d);
 }
 
-@group(0) @binding(0) var src_cubemap: texture_cube<f32>;
-@group(0) @binding(1) var src_sampler: sampler;
-@group(0) @binding(2) var dst: texture_storage_2d<rgba32float, write>;
-@group(0) @binding(3) var<uniform> params: Params;
-
-fn face_uv_to_dir(face: u32, uv: vec2<f32>) -> vec3<f32> {
-  let u = uv.x * 2.0 - 1.0;
-  let v = uv.y * 2.0 - 1.0;
-  switch (face) {
-    case 0u { return normalize(vec3( 1.0, -v, -u)); }
-    case 1u { return normalize(vec3(-1.0, -v,  u)); }
-    case 2u { return normalize(vec3( u,  1.0,  v)); }
-    case 3u { return normalize(vec3( u, -1.0, -v)); }
-    case 4u { return normalize(vec3( u, -v,  1.0)); }
-    default { return normalize(vec3(-u, -v, -1.0)); }
-  }
-}
-
-@compute @workgroup_size(8, 8)
+@compute @workgroup_size(8, 8, 1)
 fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-  if (gid.x >= params.mip_size || gid.y >= params.mip_size) { return; }
+  let dst_size = textureDimensions(dst).x;
+  if (gid.x >= dst_size || gid.y >= dst_size || gid.z >= 6u) { return; }
 
-  let uv = (vec2<f32>(gid.xy) + 0.5) / f32(params.mip_size);
-  let center = face_uv_to_dir(params.face, uv);
+  let src_size = dst_size * 2u;
+  let base = vec2<i32>(gid.xy) * 2;
+  let layer = i32(gid.z);
 
-  // Build tangent frame in cubemap space
-  let up = select(vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), abs(center.z) < 0.999);
-  let tangent_x = normalize(cross(up, center));
-  let tangent_y = cross(center, tangent_x);
-
-  let sample_offset = 2.0 * 2.0 / f32(params.mip_size);
-
-  var color = textureSampleLevel(src_cubemap, src_sampler, center, 0.0);
-
-  let offsets = array<vec2<f32>, 8>(
-    vec2(-1.0, -1.0) * 0.7,
-    vec2( 1.0, -1.0) * 0.7,
-    vec2(-1.0,  1.0) * 0.7,
-    vec2( 1.0,  1.0) * 0.7,
-    vec2( 0.0, -1.0),
-    vec2(-1.0,  0.0),
-    vec2( 1.0,  0.0),
-    vec2( 0.0,  1.0),
-  );
-
-  for (var i = 0u; i < 8u; i++) {
-    let dir = center
-      + tangent_x * (offsets[i].x * sample_offset)
-      + tangent_y * (offsets[i].y * sample_offset);
-    color += textureSampleLevel(src_cubemap, src_sampler, dir, 0.0) * 0.375;
+  var color = vec4<f32>(0.0);
+  var total = 0.0;
+  for (var dy = 0; dy < 2; dy++) {
+    for (var dx = 0; dx < 2; dx++) {
+      let coord = base + vec2(dx, dy);
+      let w = texel_weight(coord, src_size);
+      color += textureLoad(src, coord, layer, 0) * w;
+      total += w;
+    }
   }
-
-  color *= 0.25;
-
-  textureStore(dst, gid.xy, color);
+  textureStore(dst, gid.xy, layer, color / total);
 }
 `;
 
@@ -150,23 +127,20 @@ function generateCubemapMips(
   texture: GPUTexture,
   size: number,
   mipLevels: number,
-  sampler: GPUSampler,
 ): void {
-  const module = device.createShaderModule({ code: ANGULAR_DOWNSAMPLE_WGSL });
+  const module = device.createShaderModule({ code: BOX_DOWNSAMPLE_WGSL });
   const bgl = device.createBindGroupLayout({
     entries: [
       {
         binding: 0,
         visibility: GPUShaderStage.COMPUTE,
-        texture: { sampleType: 'float', viewDimension: 'cube' },
+        texture: { sampleType: 'unfilterable-float', viewDimension: '2d-array' },
       },
-      { binding: 1, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'filtering' } },
       {
-        binding: 2,
+        binding: 1,
         visibility: GPUShaderStage.COMPUTE,
-        storageTexture: { access: 'write-only', format: 'rgba32float', viewDimension: '2d' },
+        storageTexture: { access: 'write-only', format: 'rgba32float', viewDimension: '2d-array' },
       },
-      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
     ],
   });
   const pipeline = device.createComputePipeline({
@@ -174,54 +148,39 @@ function generateCubemapMips(
     compute: { module, entryPoint: 'main' },
   });
 
+  // One pass per mip: a mip written by one pass may only be read in a later
+  // pass (same-pass read+write of one subresource fails usage validation).
+  const encoder = device.createCommandEncoder();
   for (let mip = 1; mip < mipLevels; mip++) {
     const mipSize = size >> mip;
-    const srcView = texture.createView({
-      dimension: 'cube',
-      baseMipLevel: mip - 1,
-      mipLevelCount: 1,
+    const bg = device.createBindGroup({
+      layout: bgl,
+      entries: [
+        {
+          binding: 0,
+          resource: texture.createView({
+            dimension: '2d-array',
+            baseMipLevel: mip - 1,
+            mipLevelCount: 1,
+          }),
+        },
+        {
+          binding: 1,
+          resource: texture.createView({
+            dimension: '2d-array',
+            baseMipLevel: mip,
+            mipLevelCount: 1,
+          }),
+        },
+      ],
     });
-
-    const encoder = device.createCommandEncoder();
     const pass = encoder.beginComputePass();
     pass.setPipeline(pipeline);
-
-    for (let face = 0; face < 6; face++) {
-      const paramsData = new ArrayBuffer(8);
-      new Uint32Array(paramsData).set([face, mipSize]);
-      const paramsBuf = device.createBuffer({
-        size: 8,
-        usage: GPUBufferUsage.UNIFORM,
-        mappedAtCreation: true,
-      });
-      new Uint8Array(paramsBuf.getMappedRange()).set(new Uint8Array(paramsData));
-      paramsBuf.unmap();
-
-      const bg = device.createBindGroup({
-        layout: bgl,
-        entries: [
-          { binding: 0, resource: srcView },
-          { binding: 1, resource: sampler },
-          {
-            binding: 2,
-            resource: texture.createView({
-              dimension: '2d',
-              baseArrayLayer: face,
-              arrayLayerCount: 1,
-              baseMipLevel: mip,
-              mipLevelCount: 1,
-            }),
-          },
-          { binding: 3, resource: { buffer: paramsBuf } },
-        ],
-      });
-      pass.setBindGroup(0, bg);
-      pass.dispatchWorkgroups(Math.ceil(mipSize / 8), Math.ceil(mipSize / 8));
-    }
-
+    pass.setBindGroup(0, bg);
+    pass.dispatchWorkgroups(Math.ceil(mipSize / 8), Math.ceil(mipSize / 8), 6);
     pass.end();
-    device.queue.submit([encoder.finish()]);
   }
+  device.queue.submit([encoder.finish()]);
 }
 
 export function prefilterEnvMap(opts: PrefilterOptions): PrefilterResult {
@@ -295,7 +254,7 @@ export function prefilterEnvMap(opts: PrefilterOptions): PrefilterResult {
     device.queue.submit([encoder.finish()]);
   }
 
-  generateCubemapMips(device, envCubemap, cubemapSize, mipLevels, linearSampler);
+  generateCubemapMips(device, envCubemap, cubemapSize, mipLevels);
 
   const specularMap = device.createTexture({
     size: [cubemapSize, cubemapSize, 6],
